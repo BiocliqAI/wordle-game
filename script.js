@@ -246,6 +246,7 @@ class WordleGame {
         this.message = document.getElementById('message');
         this.resetButton = document.getElementById('reset-button');
         
+        this.tutorial = new WordleTutorial();
         this.init();
     }
     
@@ -321,6 +322,17 @@ class WordleGame {
         this.resetButton.addEventListener('touchend', (e) => {
             e.preventDefault();
             this.resetGame();
+        });
+
+        // Help button functionality
+        this.helpButton = document.getElementById('help-button');
+        this.helpButton.addEventListener('click', () => {
+            this.tutorial.show();
+        });
+        
+        this.helpButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.tutorial.show();
         });
     }
     
@@ -510,6 +522,235 @@ class WordleGame {
     
     getRandomWord() {
         return this.wordList[Math.floor(Math.random() * this.wordList.length)];
+    }
+}
+
+class WordleTutorial {
+    constructor() {
+        this.overlay = document.getElementById('tutorial-overlay');
+        this.titleElement = document.getElementById('tutorial-title');
+        this.bodyElement = document.getElementById('tutorial-body');
+        this.demoElement = document.getElementById('tutorial-demo');
+        this.progressElement = document.getElementById('tutorial-progress');
+        this.prevButton = document.getElementById('tutorial-prev');
+        this.nextButton = document.getElementById('tutorial-next');
+        this.closeButton = document.getElementById('tutorial-close');
+        
+        this.currentStep = 0;
+        this.totalSteps = 5;
+        
+        this.steps = [
+            {
+                title: "Welcome to Wordle!",
+                body: "<p>Wordle is a fun word puzzle game where you have <strong>6 attempts</strong> to guess a secret <strong>5-letter word</strong>.</p><p>Let me show you how to play!</p>",
+                demo: () => this.demoWelcome()
+            },
+            {
+                title: "How to Make a Guess",
+                body: "<p>Type a 5-letter word using the on-screen keyboard or your physical keyboard.</p><p>Each letter will appear in the grid as you type.</p>",
+                demo: () => this.demoTyping()
+            },
+            {
+                title: "Understanding the Colors",
+                body: "<p>After each guess, the tiles will change colors to give you hints:</p><p><strong>🟩 Green:</strong> Letter is correct and in the right position</p><p><strong>🟨 Yellow:</strong> Letter is in the word but wrong position</p><p><strong>⬜ Gray:</strong> Letter is not in the word</p>",
+                demo: () => this.demoColors()
+            },
+            {
+                title: "Use Your Clues",
+                body: "<p>Use the color clues to make better guesses!</p><p>In this example, we know:</p><p>• <strong>A</strong> is in the word but not in position 1</p><p>• <strong>E</strong> is in the correct position (3)</p><p>• <strong>R, S, T</strong> are not in the word</p>",
+                demo: () => this.demoStrategy()
+            },
+            {
+                title: "Keep Playing Until You Win!",
+                body: "<p>You have <strong>6 attempts</strong> to guess the word.</p><p>The keyboard will also show which letters you've tried:</p><p>• <strong>Green keys:</strong> Correct position</p><p>• <strong>Yellow keys:</strong> In word, wrong position</p><p>• <strong>Gray keys:</strong> Not in word</p><p><strong>Good luck! 🎯</strong></p>",
+                demo: () => this.demoFinal()
+            }
+        ];
+        
+        this.init();
+    }
+    
+    init() {
+        this.prevButton.addEventListener('click', () => this.previousStep());
+        this.nextButton.addEventListener('click', () => this.nextStep());
+        this.closeButton.addEventListener('click', () => this.hide());
+        
+        // Close on overlay click
+        this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay) {
+                this.hide();
+            }
+        });
+        
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.overlay.classList.contains('active')) {
+                this.hide();
+            }
+        });
+    }
+    
+    show() {
+        this.currentStep = 0;
+        this.overlay.classList.add('active');
+        this.updateStep();
+    }
+    
+    hide() {
+        this.overlay.classList.remove('active');
+        this.clearDemo();
+    }
+    
+    nextStep() {
+        if (this.currentStep < this.totalSteps - 1) {
+            this.currentStep++;
+            this.updateStep();
+        } else {
+            this.hide();
+        }
+    }
+    
+    previousStep() {
+        if (this.currentStep > 0) {
+            this.currentStep--;
+            this.updateStep();
+        }
+    }
+    
+    updateStep() {
+        const step = this.steps[this.currentStep];
+        
+        this.titleElement.textContent = step.title;
+        this.bodyElement.innerHTML = step.body;
+        this.progressElement.textContent = `${this.currentStep + 1} / ${this.totalSteps}`;
+        
+        // Update navigation buttons
+        this.prevButton.style.display = this.currentStep > 0 ? 'block' : 'none';
+        this.nextButton.textContent = this.currentStep < this.totalSteps - 1 ? 'Next →' : 'Start Playing!';
+        
+        this.clearDemo();
+        step.demo();
+    }
+    
+    clearDemo() {
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        tiles.forEach(tile => {
+            tile.textContent = '';
+            tile.className = 'demo-tile';
+        });
+    }
+    
+    demoWelcome() {
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        // Show empty grid
+        tiles.forEach(tile => {
+            tile.textContent = '';
+            tile.className = 'demo-tile';
+        });
+    }
+    
+    demoTyping() {
+        const word = 'HEART';
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        
+        // Clear first
+        this.clearDemo();
+        
+        // Animate typing
+        word.split('').forEach((letter, index) => {
+            setTimeout(() => {
+                tiles[index].textContent = letter;
+                tiles[index].classList.add('filled', 'typing');
+            }, index * 300);
+        });
+    }
+    
+    demoColors() {
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        const word = 'HEART';
+        const colors = ['present', 'absent', 'correct', 'absent', 'absent'];
+        
+        // First show the word
+        word.split('').forEach((letter, index) => {
+            tiles[index].textContent = letter;
+            tiles[index].classList.add('filled');
+        });
+        
+        // Then animate colors
+        setTimeout(() => {
+            tiles.forEach((tile, index) => {
+                setTimeout(() => {
+                    tile.classList.add('flip');
+                    setTimeout(() => {
+                        tile.classList.add(colors[index]);
+                        tile.classList.remove('flip');
+                    }, 300);
+                }, index * 100);
+            });
+        }, 500);
+    }
+    
+    demoStrategy() {
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        
+        // First guess: HEART
+        const firstGuess = ['H', 'E', 'A', 'R', 'T'];
+        const firstColors = ['absent', 'correct', 'present', 'absent', 'absent'];
+        
+        // Second guess: PLACE
+        const secondGuess = ['P', 'L', 'A', 'C', 'E'];
+        const secondColors = ['absent', 'absent', 'correct', 'absent', 'correct'];
+        
+        // Show first guess
+        firstGuess.forEach((letter, index) => {
+            tiles[index].textContent = letter;
+            tiles[index].classList.add('filled', firstColors[index]);
+        });
+        
+        // Show second guess after delay
+        setTimeout(() => {
+            secondGuess.forEach((letter, index) => {
+                tiles[index + 5].textContent = letter;
+                tiles[index + 5].classList.add('filled');
+                
+                setTimeout(() => {
+                    tiles[index + 5].classList.add('flip');
+                    setTimeout(() => {
+                        tiles[index + 5].classList.add(secondColors[index]);
+                        tiles[index + 5].classList.remove('flip');
+                    }, 300);
+                }, index * 100);
+            });
+        }, 1000);
+    }
+    
+    demoFinal() {
+        const tiles = this.demoElement.querySelectorAll('.demo-tile');
+        
+        // Show winning sequence
+        const guesses = [
+            { word: 'STARE', colors: ['absent', 'absent', 'present', 'absent', 'correct'] },
+            { word: 'COULD', colors: ['absent', 'absent', 'absent', 'absent', 'absent'] },
+            { word: 'PHONE', colors: ['correct', 'correct', 'correct', 'correct', 'correct'] }
+        ];
+        
+        guesses.forEach((guess, rowIndex) => {
+            setTimeout(() => {
+                guess.word.split('').forEach((letter, colIndex) => {
+                    const tileIndex = rowIndex * 5 + colIndex;
+                    tiles[tileIndex].textContent = letter;
+                    tiles[tileIndex].classList.add('filled');
+                    
+                    setTimeout(() => {
+                        tiles[tileIndex].classList.add('flip');
+                        setTimeout(() => {
+                            tiles[tileIndex].classList.add(guess.colors[colIndex]);
+                            tiles[tileIndex].classList.remove('flip');
+                        }, 300);
+                    }, colIndex * 100);
+                });
+            }, rowIndex * 1000);
+        });
     }
 }
 
