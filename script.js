@@ -547,22 +547,22 @@ class WordleTutorial {
             },
             {
                 title: "How to Make a Guess",
-                body: "<p>Type a 5-letter word using the on-screen keyboard or your physical keyboard.</p><p>Each letter will appear in the grid as you type.</p>",
+                body: "<p>Type a 5-letter word using the on-screen keyboard or your physical keyboard.</p><p>Each letter will appear in the grid as you type.</p><p>Let's try <strong>STARE</strong> as our first guess:</p>",
                 demo: () => this.demoTyping()
             },
             {
                 title: "Understanding the Colors",
-                body: "<p>After each guess, the tiles will change colors to give you hints:</p><p><strong>🟩 Green:</strong> Letter is correct and in the right position</p><p><strong>🟨 Yellow:</strong> Letter is in the word but wrong position</p><p><strong>⬜ Gray:</strong> Letter is not in the word</p>",
+                body: "<p>After submitting your guess, the tiles change colors to give you hints:</p><p><strong>🟩 Green:</strong> Letter is correct and in the right position</p><p><strong>🟨 Yellow:</strong> Letter is in the word but wrong position</p><p><strong>⬜ Gray:</strong> Letter is not in the word</p><p>Let's see what <strong>STARE</strong> tells us!</p>",
                 demo: () => this.demoColors()
             },
             {
                 title: "Use Your Clues",
-                body: "<p>Use the color clues to make better guesses!</p><p>In this example, we know:</p><p>• <strong>A</strong> is in the word but not in position 1</p><p>• <strong>E</strong> is in the correct position (3)</p><p>• <strong>R, S, T</strong> are not in the word</p>",
+                body: "<p>Great! Now we use the clues to make a better guess:</p><p>• <strong>S, T, R</strong> are not in the word (gray)</p><p>• <strong>A</strong> is in the word but not position 3 (yellow)</p><p>• <strong>E</strong> is in the correct position 5 (green)</p><p>Let's try <strong>PLACE</strong> next, moving A to position 3:</p>",
                 demo: () => this.demoStrategy()
             },
             {
                 title: "Keep Playing Until You Win!",
-                body: "<p>You have <strong>6 attempts</strong> to guess the word.</p><p>The keyboard will also show which letters you've tried:</p><p>• <strong>Green keys:</strong> Correct position</p><p>• <strong>Yellow keys:</strong> In word, wrong position</p><p>• <strong>Gray keys:</strong> Not in word</p><p><strong>Good luck! 🎯</strong></p>",
+                body: "<p>Perfect! We're getting closer. Now we know:</p><p>• <strong>L</strong> is in the word but not position 2 (yellow)</p><p>• <strong>A</strong> is in the correct position 3 (green)</p><p>• <strong>E</strong> is in the correct position 5 (green)</p><p>With these clues, we can guess <strong>WHALE</strong> and win!</p><p><strong>You have 6 attempts total - good luck! 🎯</strong></p>",
                 demo: () => this.demoFinal()
             }
         ];
@@ -650,7 +650,7 @@ class WordleTutorial {
     }
     
     demoTyping() {
-        const word = 'HEART';
+        const word = 'STARE';
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
         // Clear first
@@ -667,8 +667,9 @@ class WordleTutorial {
     
     demoColors() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
-        const word = 'HEART';
-        const colors = ['present', 'absent', 'correct', 'absent', 'absent'];
+        const word = 'STARE';
+        // For secret word WHALE: S=absent, T=absent, A=present(wrong pos), R=absent, E=correct
+        const colors = ['absent', 'absent', 'present', 'absent', 'correct'];
         
         // First show the word
         word.split('').forEach((letter, index) => {
@@ -693,15 +694,16 @@ class WordleTutorial {
     demoStrategy() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
-        // First guess: HEART
-        const firstGuess = ['H', 'E', 'A', 'R', 'T'];
-        const firstColors = ['absent', 'correct', 'present', 'absent', 'absent'];
+        // First guess: STARE (already shown in previous step)
+        const firstGuess = ['S', 'T', 'A', 'R', 'E'];
+        const firstColors = ['absent', 'absent', 'present', 'absent', 'correct'];
         
-        // Second guess: PLACE
+        // Second guess: PLACE (using clues from STARE)
         const secondGuess = ['P', 'L', 'A', 'C', 'E'];
-        const secondColors = ['absent', 'absent', 'correct', 'absent', 'correct'];
+        // For secret word WHALE: P=absent, L=present, A=correct, C=absent, E=correct
+        const secondColors = ['absent', 'present', 'correct', 'absent', 'correct'];
         
-        // Show first guess
+        // Show first guess (from previous step)
         firstGuess.forEach((letter, index) => {
             tiles[index].textContent = letter;
             tiles[index].classList.add('filled', firstColors[index]);
@@ -727,11 +729,11 @@ class WordleTutorial {
     demoFinal() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
-        // Show winning sequence
+        // Show the complete winning sequence for WHALE
         const guesses = [
             { word: 'STARE', colors: ['absent', 'absent', 'present', 'absent', 'correct'] },
-            { word: 'COULD', colors: ['absent', 'absent', 'absent', 'absent', 'absent'] },
-            { word: 'PHONE', colors: ['correct', 'correct', 'correct', 'correct', 'correct'] }
+            { word: 'PLACE', colors: ['absent', 'present', 'correct', 'absent', 'correct'] },
+            { word: 'WHALE', colors: ['correct', 'correct', 'correct', 'correct', 'correct'] }
         ];
         
         guesses.forEach((guess, rowIndex) => {
