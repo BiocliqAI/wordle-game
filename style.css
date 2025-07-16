@@ -123,6 +123,9 @@ h1 {
     background-color: #121213;
     color: #ffffff;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .tile.filled {

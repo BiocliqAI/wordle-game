@@ -547,22 +547,22 @@ class WordleTutorial {
             },
             {
                 title: "How to Make a Guess",
-                body: "<p>Type a 5-letter word using the on-screen keyboard or your physical keyboard.</p><p>Each letter will appear in the grid as you type.</p><p>Let's try <strong>STARE</strong> as our first guess:</p>",
+                body: "<p>Type a 5-letter word using the on-screen keyboard or your physical keyboard.</p><p>Each letter will appear in the grid as you type.</p><p>Let's try <strong>HOUSE</strong> as our first guess:</p>",
                 demo: () => this.demoTyping()
             },
             {
                 title: "Understanding the Colors",
-                body: "<p>After submitting your guess, the tiles change colors to give you hints:</p><p><strong>🟩 Green:</strong> Letter is correct and in the right position</p><p><strong>🟨 Yellow:</strong> Letter is in the word but wrong position</p><p><strong>⬜ Gray:</strong> Letter is not in the word</p><p>Let's see what <strong>STARE</strong> tells us!</p>",
+                body: "<p>After submitting your guess, the tiles change colors to give you hints:</p><p><strong>🟩 Green:</strong> Letter is correct and in the right position</p><p><strong>🟨 Yellow:</strong> Letter is in the word but wrong position</p><p><strong>⬜ Gray:</strong> Letter is not in the word</p><p>Let's see what <strong>HOUSE</strong> tells us!</p>",
                 demo: () => this.demoColors()
             },
             {
                 title: "Use Your Clues",
-                body: "<p>Great! Now we use the clues to make a better guess:</p><p>• <strong>S, R, E</strong> are not in the word (gray)</p><p>• <strong>T</strong> is in the word but not position 2 (yellow)</p><p>• <strong>A</strong> is in the word but not position 3 (yellow)</p><p>Let's try <strong>PLANT</strong> next, using our clues:</p>",
+                body: "<p>Good! Now we use the clues from <strong>HOUSE</strong>:</p><p>• <strong>H, U, S</strong> are not in the word (gray)</p><p>• <strong>O</strong> is in the word but not position 2 (yellow)</p><p>• <strong>E</strong> is in the word but not position 5 (yellow)</p><p>Let's try <strong>METRO</strong> next, using our clues:</p>",
                 demo: () => this.demoStrategy()
             },
             {
                 title: "Keep Playing Until You Win!",
-                body: "<p>Perfect! We found the word in just 2 guesses!</p><p><strong>PLANT</strong> was the secret word:</p><p>• <strong>P</strong> - correct position 1 (green)</p><p>• <strong>L</strong> - correct position 2 (green)</p><p>• <strong>A</strong> - correct position 3 (green)</p><p>• <strong>N</strong> - correct position 4 (green)</p><p>• <strong>T</strong> - correct position 5 (green)</p><p><strong>You have 6 attempts total - good luck! 🎯</strong></p>",
+                body: "<p>Great! We found the word in 3 guesses!</p><p><strong>LEMON</strong> was the secret word:</p><p>• <strong>L</strong> - correct position 1 (green)</p><p>• <strong>E</strong> - correct position 2 (green)</p><p>• <strong>M</strong> - correct position 3 (green)</p><p>• <strong>O</strong> - correct position 4 (green)</p><p>• <strong>N</strong> - correct position 5 (green)</p><p><strong>You have 6 attempts total - good luck! 🎯</strong></p>",
                 demo: () => this.demoFinal()
             }
         ];
@@ -650,7 +650,7 @@ class WordleTutorial {
     }
     
     demoTyping() {
-        const word = 'STARE';
+        const word = 'HOUSE';
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
         // Clear first
@@ -667,9 +667,9 @@ class WordleTutorial {
     
     demoColors() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
-        const word = 'STARE';
-        // For secret word PLANT: S=absent, T=present(wrong pos), A=present(wrong pos), R=absent, E=absent
-        const colors = ['absent', 'present', 'present', 'absent', 'absent'];
+        const word = 'HOUSE';
+        // For secret word LEMON: H=absent, O=present(wrong pos), U=absent, S=absent, E=present(wrong pos)
+        const colors = ['absent', 'present', 'absent', 'absent', 'present'];
         
         // First show the word
         word.split('').forEach((letter, index) => {
@@ -694,14 +694,14 @@ class WordleTutorial {
     demoStrategy() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
-        // First guess: STARE (already shown in previous step)
-        const firstGuess = ['S', 'T', 'A', 'R', 'E'];
-        const firstColors = ['absent', 'present', 'present', 'absent', 'absent'];
+        // First guess: HOUSE (already shown in previous step)
+        const firstGuess = ['H', 'O', 'U', 'S', 'E'];
+        const firstColors = ['absent', 'present', 'absent', 'absent', 'present'];
         
-        // Second guess: PLANT (using clues from STARE)
-        const secondGuess = ['P', 'L', 'A', 'N', 'T'];
-        // For secret word PLANT: All correct positions
-        const secondColors = ['correct', 'correct', 'correct', 'correct', 'correct'];
+        // Second guess: METRO (using clues from HOUSE)
+        const secondGuess = ['M', 'E', 'T', 'R', 'O'];
+        // For secret word LEMON: M=present(wrong pos), E=correct, T=absent, R=absent, O=present(wrong pos)
+        const secondColors = ['present', 'correct', 'absent', 'absent', 'present'];
         
         // Show first guess (from previous step)
         firstGuess.forEach((letter, index) => {
@@ -729,10 +729,11 @@ class WordleTutorial {
     demoFinal() {
         const tiles = this.demoElement.querySelectorAll('.demo-tile');
         
-        // Show the complete winning sequence for PLANT
+        // Show the complete winning sequence for LEMON
         const guesses = [
-            { word: 'STARE', colors: ['absent', 'present', 'present', 'absent', 'absent'] },
-            { word: 'PLANT', colors: ['correct', 'correct', 'correct', 'correct', 'correct'] }
+            { word: 'HOUSE', colors: ['absent', 'present', 'absent', 'absent', 'present'] },
+            { word: 'METRO', colors: ['present', 'correct', 'absent', 'absent', 'present'] },
+            { word: 'LEMON', colors: ['correct', 'correct', 'correct', 'correct', 'correct'] }
         ];
         
         guesses.forEach((guess, rowIndex) => {
